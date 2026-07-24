@@ -7,7 +7,7 @@ Automated container ID recognition system built during a two-month internship at
 The pipeline runs in two YOLO stages:
 
 1. **Stage 2 — Region detection**: locates the container code panel within the full image (YOLOv11n).
-2. **Stage 3 — Character recognition**: reads individual characters within the cropped region (35-class YOLO model).
+2. **Stage 3 — Character detection**: each individual character (`0`–`9`, `A`–`Z`) is treated as its own object class and detected directly by a YOLO model, rather than using traditional OCR — detected characters are then sorted spatially to reconstruct the container code.
 
 Detected characters are reassembled into a container ID and validated against the **ISO 6346 check-digit standard**, which mathematically verifies the code is legitimate (not just correctly formatted) before anything is logged.
 
@@ -16,7 +16,7 @@ Detected characters are reassembled into a container ID and validated against th
 | Mode | Trigger | Behavior |
 |---|---|---|
 | **Single-shot** | File upload or manual "Capture" button | Commits instantly if the checksum passes — no waiting, since there's only one frame to judge. |
-| **Live stream** | Continuous camera loop (~1.5s interval) | Uses majority-vote consensus across multiple frames to filter out per-character OCR noise from a handheld camera, with a bounded fallback so it never waits indefinitely. |
+| **Live stream** | Continuous camera loop (~1.5s interval) | Uses majority-vote consensus across multiple frames to filter out per-character detection noise from a handheld camera, with a bounded fallback so it never waits indefinitely. |
 
 This distinction exists because the two inputs have fundamentally different noise profiles: a single deliberate photo doesn't benefit from frame-averaging, while a live feed needs it to avoid committing on a single unlucky misread.
 
