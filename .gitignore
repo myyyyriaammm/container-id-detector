@@ -1,0 +1,8 @@
+﻿service_account.json
+__pycache__/
+*.pyc
+venv311/
+node_modules/
+history.json
+*.jpg
+.env
